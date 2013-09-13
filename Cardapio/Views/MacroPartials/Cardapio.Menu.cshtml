@@ -1,0 +1,9 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+	
+@{
+    var name = Model.MacroParameters["name"];
+    @Html.Action("Menu", "CardapioSurface", new {
+        name = name,
+        content = CurrentPage
+    })
+}

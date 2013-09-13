@@ -1,0 +1,9 @@
+﻿@model Cardapio.Models.MenuItem
+
+<!-- Cardapio Menu - Begin -->
+    @if(Model == null){
+        <!-- Menu not found -->
+    }else{
+        @Cardapio.Helpers.Html.Menu(Model)    
+    }
+<!-- Cardapio Menu - End -->

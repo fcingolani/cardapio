@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+	<metadata>
+		<id>Cardapio</id>
+		<version>0.0.0</version>
+		<title>Cardapio</title>
+		<authors>Federico Cingolani</authors>
+		<licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+		<projectUrl>https://github.com/fcingolani/cardapio</projectUrl>
+		<requireLicenseAcceptance>true</requireLicenseAcceptance>
+		<summary></summary>
+		<description>
+			<![CDATA[Cardapio is a Menu package for Umbraco.]]>
+		</description>
+		<tags>umbraco, menu</tags>
+		<dependencies>
+			<dependency id="UmbracoCms.Core" version="6.1.5" />
+      <dependency id="uComponents" version="5.5.1" />
+    </dependencies>
+	</metadata>
+	<files />
+</package>

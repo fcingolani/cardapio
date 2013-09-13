@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Package">
+
+	<Import Project="$(MSBuildProjectDirectory)\MSBuildTasks\MSBuild.Community.Tasks.Targets" />
+	<Import Project="$(MSBuildProjectDirectory)\MSBuildTasks\MSBuild.Umbraco.Tasks.Targets" />
+	<Import Project="$(MSBuildProjectDirectory)\MSBuildTasks\MSBuild.NuGet.Tasks.Targets" />
+
+	<PropertyGroup>
+		<VersionMajor>0</VersionMajor>
+		<VersionMinor>0</VersionMinor>
+		<VersionPatch>0</VersionPatch>
+		<VersionSuffix>-dev</VersionSuffix>
+		<UmbracoVersion>6.0.0</UmbracoVersion>
+    <FullVersion>$(VersionMajor).$(VersionMinor).$(VersionPatch)$(VersionSuffix)</FullVersion>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<RootDir>$(MSBuildProjectDirectory)\..\Cardapio</RootDir>
+		<OutputDir>$(MSBuildProjectDirectory)\..\Cardapio.Packages</OutputDir>
+		<BuildDir>$(MSBuildProjectDirectory)\..\Cardapio.BuildBox</BuildDir>
+		<UmbracoBuildDir>$(BuildDir)\Umbraco</UmbracoBuildDir>
+		<NuGetBuildDir>$(BuildDir)\NuGet</NuGetBuildDir>
+	</PropertyGroup>
+
+	<Target Name="Clean">
+    <RemoveDir Directories="$(OutputDir)" Condition="Exists('$(OutputDir)')" />
+		<MakeDir Directories="$(OutputDir)" />
+		<RemoveDir Directories="$(BuildDir)" Condition="Exists('$(BuildDir)')" />
+		<MakeDir Directories="$(BuildDir)" />
+		<MakeDir Directories="$(UmbracoBuildDir)" />
+		<MakeDir Directories="$(NuGetBuildDir)" />
+	</Target>
+
+  <Target Name="UpdateAssemblyInfo" DependsOnTargets="Clean">
+    <Version Major="$(VersionMajor)" Minor="$(VersionMinor)" BuildType="Automatic" RevisionType="Automatic" StartDate="01/09/2013">
+      <Output TaskParameter="Build" PropertyName="Build" />
+      <Output TaskParameter="Revision" PropertyName="Revision" />
+    </Version>
+    <AssemblyInfo CodeLanguage="CS"
+        OutputFile="$(RootDir)\Properties\VersionInfo.cs"
+        AssemblyVersion="$(VersionMajor).$(VersionMinor).$(VersionPatch)"
+        AssemblyFileVersion="$(VersionMajor).$(VersionMinor).$(Build).$(Revision)"
+        AssemblyInformationalVersion="$(FullVersion)"/>
+  </Target>
+
+	<Target Name="Compile" DependsOnTargets="UpdateAssemblyInfo">
+		<MSBuild Projects="$(RootDir)\..\Cardapio.sln" Properties="Configuration=Release" />
+	</Target>
+
+	<Target Name="PrepareFiles" DependsOnTargets="Compile">
+		<ItemGroup>
+			<BinFiles Include="$(RootDir)\obj\Release\Cardapio.dll" />
+			<DebugFiles Include="$(RootDir)\obj\Release\Cardapio.pdb" />
+			<ViewFiles Include="$(RootDir)\Views\**\*.*" />
+			<PackageFile Include="$(MSBuildProjectDirectory)\package.xml" />
+			<NuSpecFile Include="$(MSBuildProjectDirectory)\package.nuspec" />
+		</ItemGroup>
+    <MSBuild.Umbraco.Tasks.TimestampOffset Files="@(BinFiles)" Offset="-11" />
+	</Target>
+  
+	<Target Name="PrepareUmbracoFiles" DependsOnTargets="PrepareFiles">
+		<Copy SourceFiles="@(BinFiles)" DestinationFolder="$(UmbracoBuildDir)\bin" />
+		<Copy SourceFiles="@(DebugFiles)" DestinationFolder="$(UmbracoBuildDir)\bin" Condition="'$(VersionSuffix)' != ''" />
+		<Copy SourceFiles="@(ViewFiles)" DestinationFiles="@(ViewFiles->'$(UmbracoBuildDir)\Views\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(PackageFile)" DestinationFolder="$(UmbracoBuildDir)" />
+	</Target>
+  
+	<Target Name="PrepareNuGetFiles" DependsOnTargets="PrepareFiles">
+		<Copy SourceFiles="@(BinFiles)" DestinationFolder="$(NuGetBuildDir)\lib\net40" />
+		<Copy SourceFiles="@(DebugFiles)" DestinationFolder="$(NuGetBuildDir)\lib\net40" Condition="'$(VersionSuffix)' != ''" />
+		<Copy SourceFiles="@(XmlFiles)" DestinationFolder="$(NuGetBuildDir)\lib\net40" />
+		<Copy SourceFiles="@(ViewFiles)" DestinationFiles="@(ViewFiles->'$(NuGetBuildDir)\Views\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(NuSpecFile)" DestinationFolder="$(NuGetBuildDir)" />
+	</Target>
+  
+	<Target Name="UpdateUmbracoManifest" DependsOnTargets="PrepareUmbracoFiles">
+		<ItemGroup>
+			<ManifestFiles Include="$(UmbracoBuildDir)\**\*" Exclude="$(UmbracoBuildDir)\package.xml" />
+		</ItemGroup>
+		<MSBuild.Umbraco.Tasks.ManifestUpdate ManifestFile="$(UmbracoBuildDir)\package.xml"
+			WorkingDirectory="$(UmbracoBuildDir)"
+			MinimumRequiredUmbracoVersion="$(UmbracoVersion)"
+			PackageVersion="$(VersionMajor).$(VersionMinor).$(VersionPatch)$(VersionSuffix)"
+			Readme="$([System.IO.File]::ReadAllText(readme.txt))"
+			Files="@(ManifestFiles)" />
+	</Target>
+
+	<Target Name="UpdateNuGetManifest" DependsOnTargets="PrepareNuGetFiles">
+		<ItemGroup>
+			<ManifestFiles Include="$(NuGetBuildDir)\**\*" Exclude="$(NuGetBuildDir)\package.nuspec" />
+		</ItemGroup>
+		<MSBuild.NuGet.Tasks.ManifestUpdate
+			ManifestFile="$(NuGetBuildDir)\package.nuspec"
+			WorkingDirectory="$(NuGetBuildDir)"
+			Version="$(VersionMajor).$(VersionMinor).$(VersionPatch)$(VersionSuffix)"
+			Files="@(ManifestFiles)" />
+	</Target>
+  
+	<Target Name="CreateUmbracoPackage" DependsOnTargets="UpdateUmbracoManifest">
+		<ItemGroup>
+			<PackageFiles Include="$(UmbracoBuildDir)\**\*.*" />
+		</ItemGroup>
+		<MSBuild.Umbraco.Tasks.Package ManifestFile="$(UmbracoBuildDir)\package.xml"
+			WorkingDirectory="$(UmbracoBuildDir)"
+			OutputDirectory="$(OutputDir)"
+			Files="@(PackageFiles)" />
+		<RemoveDir Directories="$(UmbracoBuildDir)" Condition="Exists('$(UmbracoBuildDir)')" />
+	</Target>
+  
+	<Target Name="CreateNuGetPackage" DependsOnTargets="UpdateNuGetManifest">
+		<MSBuild.NuGet.Tasks.Pack NuGetExePath="$(MSBuildProjectDirectory)\..\packages\NuGet.CommandLine.2.7.0\tools\NuGet.exe"
+			ManifestFile="$(NuGetBuildDir)\package.nuspec"
+			BasePath="$(NuGetBuildDir)"
+			OutputDirectory="$(OutputDir)"
+			Verbosity="normal" />
+		<RemoveDir Directories="$(NuGetBuildDir)" Condition="Exists('$(NuGetBuildDir)')" />
+	</Target>
+
+	<Target Name="Package" DependsOnTargets="CreateUmbracoPackage;CreateNuGetPackage">
+		<RemoveDir Directories="$(BuildDir)" Condition="Exists('$(BuildDir)')" />
+		<Delete Files="$(RootDir)\..\Cardapio.sln.cache" />
+	</Target>
+  
+  <Target Name="Publish">
+    <Exec WorkingDirectory="$(OutputDir)" Command="NuGet.exe push &quot;Cardapio.$(FullVersion).nupkg&quot; $([System.IO.File]::ReadAllText(nuget-api-key.txt)) -s https://staging.nuget.org" />
+  </Target>
+</Project>
