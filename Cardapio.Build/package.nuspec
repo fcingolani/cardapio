@@ -18,5 +18,7 @@
       <dependency id="uComponents" version="5.5.1" />
     </dependencies>
 	</metadata>
-	<files />
+  <files>
+    <file src="**" target="" />
+  </files>
 </package>
