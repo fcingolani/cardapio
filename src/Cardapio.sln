@@ -3,19 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardapio", "Cardapio\Cardapio.csproj", "{45870B12-5347-482A-A395-E9572C6E2B9F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cardapio.Build", "Cardapio.Build", "{0F7C801F-4FD3-44BC-8E48-E9EEF3F59246}"
-	ProjectSection(SolutionItems) = preProject
-		Cardapio.Build\Cardapio.Build.cmd = Cardapio.Build\Cardapio.Build.cmd
-		Cardapio.Build\Cardapio.Build.msbuild = Cardapio.Build\Cardapio.Build.msbuild
-		Cardapio.Build\Cardapio.Ship.cmd = Cardapio.Build\Cardapio.Ship.cmd
-		Cardapio.Build\package.nuspec = Cardapio.Build\package.nuspec
-		Cardapio.Build\package.xml = Cardapio.Build\package.xml
-		Cardapio.Build\readme.txt = Cardapio.Build\readme.txt
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5D68E9BC-3ACD-4D82-8798-15F514B3A778}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cardapio.Build", "Cardapio.Build", "{0425C175-C115-48AF-8651-CC3B64AAC2CA}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\build.cmd = ..\build\build.cmd
+		..\build\build.msbuild = ..\build\build.msbuild
+		..\build\nuget-api-key.txt = ..\build\nuget-api-key.txt
+		..\build\package.nuspec = ..\build\package.nuspec
+		..\build\package.xml = ..\build\package.xml
+		..\build\readme.txt = ..\build\readme.txt
+		..\build\ship.cmd = ..\build\ship.cmd
 	EndProjectSection
 EndProject
 Global

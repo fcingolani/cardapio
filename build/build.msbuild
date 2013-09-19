@@ -15,9 +15,9 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<RootDir>$(MSBuildProjectDirectory)\..\Cardapio</RootDir>
-		<OutputDir>$(MSBuildProjectDirectory)\..\Cardapio.Packages</OutputDir>
-		<BuildDir>$(MSBuildProjectDirectory)\..\Cardapio.BuildBox</BuildDir>
+		<RootDir>$(MSBuildProjectDirectory)\..\src\Cardapio</RootDir>
+		<OutputDir>$(MSBuildProjectDirectory)\..\dist</OutputDir>
+		<BuildDir>$(MSBuildProjectDirectory)\..\buildbox</BuildDir>
 		<UmbracoBuildDir>$(BuildDir)\Umbraco</UmbracoBuildDir>
 		<NuGetBuildDir>$(BuildDir)\NuGet</NuGetBuildDir>
 	</PropertyGroup>
@@ -110,7 +110,7 @@
     <ItemGroup>
       <ManifestFiles Include="$(NuGetBuildDir)\**\*" Exclude="$(BuildNuGetDir)\package.nuspec" />
     </ItemGroup>
-		<MSBuild.NuGet.Tasks.Pack NuGetExePath="$(MSBuildProjectDirectory)\..\packages\NuGet.CommandLine.2.7.0\tools\NuGet.exe"
+		<MSBuild.NuGet.Tasks.Pack NuGetExePath="$(RootDir)\..\packages\NuGet.CommandLine.2.7.0\tools\NuGet.exe"
 			ManifestFile="$(NuGetBuildDir)\package.nuspec"
 			BasePath="$(NuGetBuildDir)"
 			OutputDirectory="$(OutputDir)"
@@ -124,6 +124,6 @@
 	</Target>
   
   <Target Name="Publish">
-    <Exec WorkingDirectory="$(OutputDir)" Command="NuGet.exe push &quot;Cardapio.$(FullVersion).nupkg&quot; $([System.IO.File]::ReadAllText(nuget-api-key.txt)) -s https://staging.nuget.org" />
+    <Exec WorkingDirectory="$(OutputDir)" Command="NuGet.exe push &quot;Cardapio.$(FullVersion).nupkg&quot; $([System.IO.File]::ReadAllText(nuget-api-key.txt))" />
   </Target>
 </Project>
