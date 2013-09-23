@@ -6,10 +6,10 @@
 	<Import Project="$(MSBuildProjectDirectory)\MSBuildTasks\MSBuild.NuGet.Tasks.Targets" />
 
 	<PropertyGroup>
-		<VersionMajor>0</VersionMajor>
+		<VersionMajor>1</VersionMajor>
 		<VersionMinor>0</VersionMinor>
 		<VersionPatch>0</VersionPatch>
-		<VersionSuffix>-dev</VersionSuffix>
+		<VersionSuffix></VersionSuffix>
 		<UmbracoVersion>6.0.0</UmbracoVersion>
     <FullVersion>$(VersionMajor).$(VersionMinor).$(VersionPatch)$(VersionSuffix)</FullVersion>
 	</PropertyGroup>
@@ -23,7 +23,6 @@
 	</PropertyGroup>
 
 	<Target Name="Clean">
-    <RemoveDir Directories="$(OutputDir)" Condition="Exists('$(OutputDir)')" />
 		<MakeDir Directories="$(OutputDir)" />
 		<RemoveDir Directories="$(BuildDir)" Condition="Exists('$(BuildDir)')" />
 		<MakeDir Directories="$(BuildDir)" />
@@ -119,7 +118,6 @@
 	</Target>
 
 	<Target Name="Package" DependsOnTargets="CreateUmbracoPackage;CreateNuGetPackage">
-		<RemoveDir Directories="$(BuildDir)" Condition="Exists('$(BuildDir)')" />
 		<Delete Files="$(RootDir)\..\Cardapio.sln.cache" />
 	</Target>
   
