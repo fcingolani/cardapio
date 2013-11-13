@@ -119,6 +119,7 @@
 
 	<Target Name="Package" DependsOnTargets="CreateUmbracoPackage;CreateNuGetPackage">
 		<Delete Files="$(RootDir)\..\Cardapio.sln.cache" />
+    <RemoveDir Directories="$(BuildDir)" Condition="Exists('$(BuildDir)')" />
 	</Target>
   
   <Target Name="Publish">

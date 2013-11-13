@@ -71,5 +71,16 @@
       </properties>
     </macro>
   </Macros>
+  <DataTypes>
+    <DataType Name="Cardapio.Url" Id="22c6f52c-5d41-45b8-845e-c16354cfdd7b" Definition="a606b208-9c65-429d-8440-3ece25f12c33" DatabaseType="Ntext">
+      <PreValues>
+        <PreValue Id="110" Value="URL|Content" />
+        <PreValue Id="111" Value="Json" />
+        <PreValue Id="112" Value="False" />
+        <PreValue Id="113" Value="True" />
+        <PreValue Id="114" Value="Content" />
+      </PreValues>
+    </DataType>
+  </DataTypes>
 
 </umbPackage>
