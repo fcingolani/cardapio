@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using uComponents.DataTypes.UrlPicker.Dto;
+using umbraco.cms.businesslogic.packager;
 using Umbraco.Core.Models;
 
 namespace Cardapio.Models
@@ -35,13 +38,28 @@ namespace Cardapio.Models
             Children = new List<MenuItem>();
         }
 
+        /**
+         * @TODO Find this a better place
+         */
+
+        public static int uComponentsMajorVersionNumber()
+        {
+            InstalledPackage uComponents = InstalledPackage.GetAllInstalledPackages().First(p => p.Data.Name.Equals("uComponents"));
+            return int.Parse(uComponents.Data.Version.Split('.').First());
+        }
+
         public static MenuItem Create(IPublishedContent node)
         {
             if (node == null)
                 return null;
 
             MenuItem item = new MenuItem();
-            UrlPickerState urlData = UrlPickerState.Deserialize(node["Url"].ToString());
+            
+            int uVersion = uComponentsMajorVersionNumber();
+
+            UrlPickerState urlData = uVersion < 6
+                                   ? UrlPickerState.Deserialize(node["Url"].ToString())
+                                   : node["Url"] as UrlPickerState;
 
             item.Name = node.Name;
 
