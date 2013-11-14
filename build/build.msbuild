@@ -7,8 +7,8 @@
 
 	<PropertyGroup>
 		<VersionMajor>1</VersionMajor>
-		<VersionMinor>0</VersionMinor>
-		<VersionPatch>1</VersionPatch>
+		<VersionMinor>1</VersionMinor>
+		<VersionPatch>0</VersionPatch>
 		<VersionSuffix></VersionSuffix>
 		<UmbracoVersion>6.0.0</UmbracoVersion>
     <FullVersion>$(VersionMajor).$(VersionMinor).$(VersionPatch)$(VersionSuffix)</FullVersion>
